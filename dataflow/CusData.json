@@ -1,0 +1,34 @@
+{
+	"name": "CusData",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CustomerADLSRead",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerData"
+				},
+				{
+					"dataset": {
+						"referenceName": "OrderADLSRead",
+						"type": "DatasetReference"
+					},
+					"name": "OrderData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CusOrderADLSPrep",
+						"type": "DatasetReference"
+					},
+					"name": "CusOrderOut"
+				}
+			],
+			"script": "\n\nsource(output(\n\t\tcustomer_id as string,\n\t\tfirst_name as string,\n\t\tlast_name as string,\n\t\temail as string,\n\t\taddress as string,\n\t\tcity as string,\n\t\tstate as string,\n\t\tzip as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CustomerData\nsource(output(\n\t\torder_id as string,\n\t\torder_date as string,\n\t\tamount as string,\n\t\tcustomer_id as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> OrderData\nCustomerData, OrderData join(CustomerData@customer_id == OrderData@customer_id,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> CusOrderInJoin\nCusOrderInJoin sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmapColumn(\n\t\tfirst_name,\n\t\tlast_name,\n\t\temail,\n\t\taddress,\n\t\tcity,\n\t\tstate,\n\t\tzip,\n\t\torder_id,\n\t\torder_date,\n\t\tamount,\n\t\tcustomer_id = CustomerData@customer_id\n\t)) ~> CusOrderOut"
+		}
+	}
+}

@@ -1,0 +1,56 @@
+{
+	"name": "orderadls",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "customeradls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "stage"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "1",
+				"type": "String"
+			},
+			{
+				"name": "George",
+				"type": "String"
+			},
+			{
+				"name": "Washington",
+				"type": "String"
+			},
+			{
+				"name": "gwashington@usa.gov",
+				"type": "String"
+			},
+			{
+				"name": "3200 Mt Vernon Hwy",
+				"type": "String"
+			},
+			{
+				"name": "Mount Vernon",
+				"type": "String"
+			},
+			{
+				"name": "VA",
+				"type": "String"
+			},
+			{
+				"name": "22121",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
