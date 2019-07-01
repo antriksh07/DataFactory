@@ -251,7 +251,7 @@
 								"referenceName": "IterateAndCopySQLTables",
 								"type": "PipelineReference"
 							},
-							"waitOnCompletion": true,
+							"waitOnCompletion": false,
 							"parameters": {
 								"tableList ": {
 									"value": "@activity('LookupTableList').output.value",
@@ -323,7 +323,8 @@
 											"linkedServiceName": {
 												"referenceName": "CustomerBlob",
 												"type": "LinkedServiceReference"
-											}
+											},
+											"path": "source"
 										}
 									},
 									"inputs": [
@@ -544,9 +545,7 @@
 						"scale": 3
 					}
 				],
-				"typeProperties": {
-					"tableName": "[[SalesLT].[Customer]"
-				}
+				"typeProperties": {}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
@@ -996,27 +995,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OnPremise')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/OnPremiseIntegrationRuntime')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
