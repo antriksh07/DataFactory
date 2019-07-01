@@ -21,7 +21,7 @@
 						"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM information_schema.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'SalesLT' and TABLE_NAME <> 'ProductModel'"
 					},
 					"dataset": {
-						"referenceName": "AzureSqlDatabase",
+						"referenceName": "AzureSqlTableName",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
