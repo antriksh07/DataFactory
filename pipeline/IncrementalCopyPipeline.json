@@ -76,7 +76,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select * from data_source_table where LastModifytime > '@{activity('LookupOldWaterMarkActivity').output.firstRow.WatermarkValue}' and LastModifytime <= '@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}'"
+						"sqlReaderQuery": "select * from data_source_table where LastModifytime > '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and LastModifytime <= '@{activity('LookupNewWaterMarkTable').output.firstRow.NewWatermarkvalue}'"
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
