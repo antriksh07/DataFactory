@@ -73,7 +73,13 @@
 										"useTypeDefault": true
 									}
 								},
-								"enableStaging": false
+								"enableStaging": true,
+								"stagingSettings": {
+									"linkedServiceName": {
+										"referenceName": "CustomerBlob",
+										"type": "LinkedServiceReference"
+									}
+								}
 							},
 							"inputs": [
 								{
