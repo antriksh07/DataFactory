@@ -7,6 +7,14 @@
 			"metadata": "Data Factory Name",
 			"defaultValue": "antrikshDF"
 		},
+		"AzureSqlDWLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
+		},
+		"AzureSqlDatabase_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
+		},
 		"CustomerBlob_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'CustomerBlob'"
@@ -58,6 +66,12 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AzureSqlDWLinkedService_connectionString": {
+						"value": "[parameters('AzureSqlDWLinkedService_connectionString')]"
+					},
+					"AzureSqlDatabase_connectionString": {
+						"value": "[parameters('AzureSqlDatabase_connectionString')]"
+					},
 					"CustomerBlob_connectionString": {
 						"value": "[parameters('CustomerBlob_connectionString')]"
 					},
@@ -79,6 +93,26 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
 		}
 	]
 }

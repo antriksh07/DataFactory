@@ -5,6 +5,12 @@
 		"factoryName": {
 			"value": "antrikshDF"
 		},
+		"AzureSqlDWLinkedService_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDatabase_connectionString": {
+			"value": ""
+		},
 		"CustomerBlob_connectionString": {
 			"value": ""
 		},
