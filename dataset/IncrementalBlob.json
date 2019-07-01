@@ -1,0 +1,23 @@
+{
+	"name": "IncrementalBlob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CustomerBlob",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "@CONCAT('Incremental-', pipeline().RunId, '.txt')",
+				"container": "incrementaldata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
