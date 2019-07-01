@@ -203,7 +203,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/GetTableListAndTriggerCopyData')]",
+			"name": "[concat(parameters('factoryName'), '/LookUpandIterate')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -227,7 +227,7 @@
 								"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM information_schema.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'SalesLT' and TABLE_NAME <> 'ProductModel'"
 							},
 							"dataset": {
-								"referenceName": "AzureSqlDatabase",
+								"referenceName": "AzureSqlTableName",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -235,8 +235,8 @@
 						}
 					},
 					{
-						"name": "TriggerCopy",
-						"type": "ExecutePipeline",
+						"name": "ForEachTableName",
+						"type": "ForEach",
 						"dependsOn": [
 							{
 								"activity": "LookupTableList",
@@ -247,25 +247,78 @@
 						],
 						"userProperties": [],
 						"typeProperties": {
-							"pipeline": {
-								"referenceName": "IterateAndCopySQLTables",
-								"type": "PipelineReference"
+							"items": {
+								"value": "@activity('LookupTableList').output.value",
+								"type": "Expression"
 							},
-							"waitOnCompletion": false,
-							"parameters": {
-								"tableList ": {
-									"value": "@activity('LookupTableList').output.value",
-									"type": "Expression"
+							"isSequential": false,
+							"activities": [
+								{
+									"name": "SqlServerToDW",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": "SELECT * FROM [@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]"
+										},
+										"sink": {
+											"type": "SqlDWSink",
+											"allowPolyBase": true,
+											"preCopyScript": "TRUNCATE TABLE [@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]",
+											"polyBaseSettings": {
+												"rejectValue": 0,
+												"rejectType": "value",
+												"useTypeDefault": true
+											}
+										},
+										"enableStaging": true,
+										"stagingSettings": {
+											"linkedServiceName": {
+												"referenceName": "CustomerBlob",
+												"type": "LinkedServiceReference"
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlDB",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlDW",
+											"type": "DatasetReference",
+											"parameters": {
+												"DWTableName": {
+													"value": "[[@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]",
+													"type": "Expression"
+												}
+											}
+										}
+									]
 								}
-							}
+							]
 						}
 					}
 				],
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSqlDatabase')]",
-				"[concat(variables('factoryId'), '/pipelines/IterateAndCopySQLTables')]"
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTableName')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlDB')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlDW')]",
+				"[concat(variables('factoryId'), '/linkedServices/CustomerBlob')]"
 			]
 		},
 		{
@@ -458,93 +511,7 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "action_id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "sequence_id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "instance_id",
-						"type": "uniqueidentifier"
-					},
-					{
-						"name": "action_type",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "action_type_name",
-						"type": "varchar"
-					},
-					{
-						"name": "dac_object_type",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "dac_object_type_name",
-						"type": "varchar"
-					},
-					{
-						"name": "action_status",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "action_status_name",
-						"type": "varchar"
-					},
-					{
-						"name": "required",
-						"type": "bit"
-					},
-					{
-						"name": "dac_object_name_pretran",
-						"type": "nvarchar"
-					},
-					{
-						"name": "dac_object_name_posttran",
-						"type": "nvarchar"
-					},
-					{
-						"name": "sqlscript",
-						"type": "nvarchar"
-					},
-					{
-						"name": "payload",
-						"type": "varbinary"
-					},
-					{
-						"name": "comments",
-						"type": "varchar"
-					},
-					{
-						"name": "error_string",
-						"type": "nvarchar"
-					},
-					{
-						"name": "created_by",
-						"type": "nvarchar"
-					},
-					{
-						"name": "date_created",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "date_modified",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
+				"schema": [],
 				"typeProperties": {}
 			},
 			"dependsOn": [
@@ -1045,6 +1012,42 @@
 				"[concat(variables('factoryId'), '/datasets/CustomerADLSRead')]",
 				"[concat(variables('factoryId'), '/datasets/OrderADLSRead')]",
 				"[concat(variables('factoryId'), '/datasets/CusOrderADLSPrep')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTableName')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
 			]
 		}
 	]
