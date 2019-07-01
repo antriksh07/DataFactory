@@ -10,8 +10,11 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "customer.csv",
-				"container": "source"
+				"fileName": {
+					"value": "@concat(pipeline().RunId, 'txt')",
+					"type": "Expression"
+				},
+				"container": "fromonprem"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
