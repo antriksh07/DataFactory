@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "antrikshDF"
+		},
+		"CustomerBlob_connectionString": {
+			"value": ""
+		},
+		"SqlServerLinked Service_connectionString": {
+			"value": ""
+		},
+		"SqlServerLinked Service_password": {
+			"value": ""
+		},
+		"customeradls_accountKey": {
+			"value": ""
+		},
+		"SqlServerLinked Service_properties_typeProperties_userName": {
+			"value": "MicrosoftAccount\\antriksh.prasad712@gmail.com"
+		},
+		"customeradls_properties_typeProperties_url": {
+			"value": "https://antrikshadlsv2.dfs.core.windows.net"
+		}
+	}
+}
