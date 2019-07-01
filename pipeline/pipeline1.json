@@ -26,7 +26,7 @@
 				}
 			},
 			{
-				"name": "Copy Data1",
+				"name": "CopySqlDBtoWahehouse",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -45,8 +45,32 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource"
+					},
+					"sink": {
+						"type": "SqlDWSink",
+						"allowPolyBase": true,
+						"polyBaseSettings": {
+							"rejectValue": 0,
+							"rejectType": "value",
+							"useTypeDefault": true
+						}
+					},
 					"enableStaging": false
-				}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlDatabase",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureSqlDW",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"annotations": []
